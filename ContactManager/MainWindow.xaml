@@ -5,8 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContactManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Contact Manager" 
+        Height="600" Width="800"
+        MinHeight="500" MinWidth="500"
+        WindowStartupLocation="CenterScreen">
+
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Import" IsEnabled="False"/>
+                <MenuItem Header="Export" IsEnabled="False"/>
+                <Separator/>
+                <MenuItem Header="Exit" Click="Menu_Exit_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="Contacts">
+                <MenuItem Header="Add contact" IsEnabled="False"/>
+                <MenuItem Header="Clear contacts" IsEnabled="False"/>
+            </MenuItem>
+
+            <MenuItem Header="About" Click="Menu_About_Click"/>
+        </Menu>
+
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="List" Name="TabList">
+                <ListView Name="ContactList"
+                      HorizontalContentAlignment="Center">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Height" Value="50"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <!-- todo -->
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Grid" Name="TabGrid">
+                <DataGrid x:Name="ContactGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" />
+                        <DataGridTextColumn Header="Surname" />
+                        <DataGridTextColumn Header="Email" />
+                        <DataGridTextColumn Header="Phone" />
+                        <DataGridComboBoxColumn Header="Gender" />
+                    </DataGrid.Columns>
+
+                </DataGrid>
+            </TabItem>
+
+        </TabControl>
+
+
+    </DockPanel>
+    
+    
 </Window>

@@ -24,5 +24,15 @@ namespace ContactManager
         {
             InitializeComponent();
         }
+
+        private void Menu_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Menu_About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("This is simple contact manager");
+        }
     }
 }
