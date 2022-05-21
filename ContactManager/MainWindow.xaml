@@ -37,8 +37,8 @@
             </MenuItem>
 
             <MenuItem Header="Contacts">
-                <MenuItem Header="Add contact" IsEnabled="False"/>
-                <MenuItem Header="Clear contacts" IsEnabled="False"/>
+                <MenuItem Header="Add contact" Click="Menu_Add_Click" />
+                <MenuItem Header="Clear contacts" Click="Menu_Clear_Click"/>
             </MenuItem>
 
             <MenuItem Header="About" Click="Menu_About_Click"/>

@@ -32,5 +32,17 @@ namespace ContactManager
         {
             MessageBox.Show("This is simple contact manager");
         }
+
+        private void Menu_Add_Click(object sender, RoutedEventArgs e)
+        {
+            new AddContactWindow(contacts).ShowDialog();
+            DataContext = contacts;
+        }
+
+        private void Menu_Clear_Click(object sender, RoutedEventArgs e)
+        {
+            contacts = new ObservableCollection<Contact>();
+            DataContext = contacts;
+        }
     }
 }
