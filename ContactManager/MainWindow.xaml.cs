@@ -19,7 +19,6 @@ namespace ContactManager
             contacts = new ObservableCollection<Contact>();
             contacts.Add(new Contact("Rachel", "Green", "rachel@example.com", "765434", Genders.Female));
             contacts.Add(new Contact("Chandler", "Bing", "chandler@example.com", "123", Genders.Male));
-            contacts.Add(new Contact());
             DataContext = contacts;
         }
 

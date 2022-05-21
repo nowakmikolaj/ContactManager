@@ -33,17 +33,12 @@ namespace ContactManager
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Contact)
-            {
-                Contact contact = (Contact)value;
-                return new StringBuilder()
+            Contact contact = (Contact)value;
+            return new StringBuilder()
                         .Append(contact.Name)
                         .Append(" ")
                         .Append(contact.Surname)
                         .ToString();
-            }
-            else
-                throw new Exception("Converting error");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -52,4 +47,19 @@ namespace ContactManager
         }
     }
 
+    public class ImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Contact contact = (Contact)value;
+            return contact.Gender == Genders.Male
+                ? "pack://application:,,,/Resources/man.png"
+                : "pack://application:,,,/Resources/woman.jpg";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

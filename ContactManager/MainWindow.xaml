@@ -13,11 +13,25 @@
 
     <Window.Resources>
         <local:ContactConverter x:Key="contactConverter"/>
+        <local:ImageConverter x:Key="imageConverter"/>
 
         <Style x:Key="contactItem" TargetType="{x:Type TextBlock}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="FontSize" Value="22"/>
             <Setter Property="Margin" Value="10 0"/>
+        </Style>
+
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="#FFAFC5FF"/>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#FF75A1FF"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
 
         <ObjectDataProvider x:Key="GendersEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
@@ -47,25 +61,30 @@
         
         <TabControl Grid.Row="1">
             <TabItem Header="List" Name="TabList">
-                <ListView Name="ContactList"
+                <ListBox Name="ContactList"
                       HorizontalContentAlignment="Center" 
-                      ItemsSource="{Binding}" >
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Height" Value="50"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                            <Setter Property="Background" Value="#FFAFC5FF"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
+                      ItemsSource="{Binding}" 
+                      AlternationCount="2">
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Style="{StaticResource contactItem}" 
-                                           Text="{Binding Converter={StaticResource contactConverter}}"/>
-                            </StackPanel>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left"
+                                           VerticalAlignment="Center"
+                                           Style="{StaticResource contactItem}" 
+                                           Text="{Binding Converter={StaticResource contactConverter}}">
+                                </TextBlock>
+
+                                <Border BorderThickness="1"
+                                        BorderBrush="#FF000000"
+                                        HorizontalAlignment="Right"
+                                        Width="50">
+                                    <Image Source="{Binding Converter={StaticResource imageConverter}}"
+                                           HorizontalAlignment="Center"/>
+                                </Border>
+                            </DockPanel>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
             
             <TabItem Header="Grid" Name="TabGrid">
