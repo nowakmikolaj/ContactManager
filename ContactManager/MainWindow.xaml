@@ -4,12 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContactManager"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="Contact Manager" 
         Height="600" Width="800"
         MinHeight="500" MinWidth="500"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <local:ContactConverter x:Key="contactConverter"/>
+
+        <Style x:Key="contactItem" TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="Margin" Value="10 0"/>
+        </Style>
+
+        <ObjectDataProvider x:Key="GendersEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type Type="local:Genders"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">
@@ -27,45 +43,46 @@
 
             <MenuItem Header="About" Click="Menu_About_Click"/>
         </Menu>
-
-
+        
+        
         <TabControl Grid.Row="1">
             <TabItem Header="List" Name="TabList">
                 <ListView Name="ContactList"
-                      HorizontalContentAlignment="Center">
+                      HorizontalContentAlignment="Center" 
+                      ItemsSource="{Binding}" >
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Height" Value="50"/>
                             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="Background" Value="#FFAFC5FF"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
-                                <!-- todo -->
+                                <TextBlock Style="{StaticResource contactItem}" 
+                                           Text="{Binding Converter={StaticResource contactConverter}}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </TabItem>
+            
             <TabItem Header="Grid" Name="TabGrid">
                 <DataGrid x:Name="ContactGrid"
+                          ItemsSource="{Binding}"
                           AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" />
-                        <DataGridTextColumn Header="Surname" />
-                        <DataGridTextColumn Header="Email" />
-                        <DataGridTextColumn Header="Phone" />
-                        <DataGridComboBoxColumn Header="Gender" />
+                        <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Surname" Width="*" Binding="{Binding Surname}"/>
+                        <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Email}"/>
+                        <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Phone}"/>
+                        <DataGridComboBoxColumn Header="Gender"  Width="*" 
+                                                SelectedItemBinding="{Binding Gender}" 
+                                                ItemsSource="{Binding Source={StaticResource GendersEnum}}"/>
                     </DataGrid.Columns>
-
                 </DataGrid>
             </TabItem>
-
         </TabControl>
-
-
     </DockPanel>
-    
-    
 </Window>
