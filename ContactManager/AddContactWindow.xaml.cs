@@ -34,7 +34,7 @@ namespace ContactManager
                                     nameBox.Text,
                                     surnameBox.Text,
                                     emailBox.Text,
-                                    phoneBox.Text,
+                                    int.Parse(phoneBox.Text),
                                     (Genders)genderBox.SelectedValue ));
             Close();
         }

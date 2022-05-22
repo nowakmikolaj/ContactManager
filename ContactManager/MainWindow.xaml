@@ -12,7 +12,6 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <local:ContactConverter x:Key="contactConverter"/>
         <local:ImageConverter x:Key="imageConverter"/>
 
         <Style x:Key="contactItem" TargetType="{x:Type TextBlock}">
@@ -29,6 +28,12 @@
                 <Trigger Property="ItemsControl.AlternationIndex" Value="1">
                     <Setter Property="Background" Value="#FF75A1FF"/>
                 </Trigger>
+    
+        <!--https://stackoverflow.com/questions/62178290/wpf-listbox-showing-empty-row-created-by-datagrid-->
+                <DataTrigger Binding="{Binding}"
+                             Value="{x:Static CollectionView.NewItemPlaceholder}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
             </Style.Triggers>
             <Setter Property="Height" Value="60"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -70,15 +75,21 @@
                             <DockPanel>
                                 <TextBlock DockPanel.Dock="Left"
                                            VerticalAlignment="Center"
-                                           Style="{StaticResource contactItem}" 
-                                           Text="{Binding Converter={StaticResource contactConverter}}">
+                                           Style="{StaticResource contactItem}" >
+        <!--https://stackoverflow.com/questions/2552853/how-to-bind-multiple-values-to-a-single-wpf-textblock-->
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Path="Name" />
+                                            <Binding Path="Surname" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
                                 </TextBlock>
 
                                 <Border BorderThickness="1"
                                         BorderBrush="#FF000000"
                                         HorizontalAlignment="Right"
                                         Width="50">
-                                    <Image Source="{Binding Converter={StaticResource imageConverter}}"
+                                    <Image Source="{Binding Gender, Converter={StaticResource imageConverter}}"
                                            HorizontalAlignment="Center"/>
                                 </Border>
                             </DockPanel>
@@ -90,7 +101,8 @@
             <TabItem Header="Grid" Name="TabGrid">
                 <DataGrid x:Name="ContactGrid"
                           ItemsSource="{Binding}"
-                          AutoGenerateColumns="False">
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
                         <DataGridTextColumn Header="Surname" Width="*" Binding="{Binding Surname}"/>
@@ -98,7 +110,8 @@
                         <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Phone}"/>
                         <DataGridComboBoxColumn Header="Gender"  Width="*" 
                                                 SelectedItemBinding="{Binding Gender}" 
-                                                ItemsSource="{Binding Source={StaticResource GendersEnum}}"/>
+                                                ItemsSource="{Binding Source={StaticResource GendersEnum},
+                                                    UpdateSourceTrigger=PropertyChanged}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
