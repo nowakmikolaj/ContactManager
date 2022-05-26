@@ -13,32 +13,85 @@
 
     <Window.Resources>
         <local:ImageConverter x:Key="imageConverter"/>
+        <local:VisibilityConverter x:Key="visibilityConverter"/>
 
         <Style x:Key="contactItem" TargetType="{x:Type TextBlock}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="Margin" Value="10 0"/>
         </Style>
 
-        <Style TargetType="{x:Type ListBoxItem}">
-            <Style.Triggers>
-                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                    <Setter Property="Background" Value="#FFAFC5FF"/>
-                </Trigger>
-                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                    <Setter Property="Background" Value="#FF75A1FF"/>
-                </Trigger>
-    
-        <!--https://stackoverflow.com/questions/62178290/wpf-listbox-showing-empty-row-created-by-datagrid-->
-                <DataTrigger Binding="{Binding}"
-                             Value="{x:Static CollectionView.NewItemPlaceholder}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </DataTrigger>
-            </Style.Triggers>
-            <Setter Property="Height" Value="60"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Style x:Key="excontactItem" TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="10 0"/>
         </Style>
 
+        <DataTemplate x:Key="defaultContactTemplate">
+            <DockPanel >
+                <TextBlock DockPanel.Dock="Left"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource contactItem}" >
+        <!--https://stackoverflow.com/questions/2552853/how-to-bind-multiple-values-to-a-single-wpf-textblock-->
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} {1}">
+                            <Binding Path="Name" />
+                            <Binding Path="Surname" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <Border BorderThickness="1"
+                        BorderBrush="#FF000000"
+                        HorizontalAlignment="Right"
+                        Width="50">
+                    <Image Source="{Binding Gender, Converter={StaticResource imageConverter}}"
+                                           HorizontalAlignment="Center"/>
+                </Border>
+            </DockPanel>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        
+                        
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                <Setter Property="Background" Value="#FFA0C5FF"/>
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="#FF75A1FF"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="ItemsControl.ItemTemplate" Value="{StaticResource selectedContactTemplate}"/>
+                                <Setter Property="Background" Value="#FFFDCF6C"/>
+                                <Setter Property="Height" Value="90"/>
+                            </Trigger>
+                            
+                <!--https://stackoverflow.com/questions/62178290/wpf-listbox-showing-empty-row-created-by-datagrid-->
+                            <DataTrigger Binding="{Binding}"
+                                         Value="{x:Static CollectionView.NewItemPlaceholder}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--https://stackoverflow.com/questions/69524635/wpf-datagrid-with-a-one-click-combobox-showing-enumeration-values-sorted-by-enum-->
         <ObjectDataProvider x:Key="GendersEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type Type="local:Genders"/>
@@ -69,32 +122,19 @@
                 <ListBox Name="ContactList"
                       HorizontalContentAlignment="Center" 
                       ItemsSource="{Binding}" 
+                      SelectionChanged="ContactList_SelectionChanged"
+                      ItemTemplate="{StaticResource defaultContactTemplate}"
                       AlternationCount="2">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left"
-                                           VerticalAlignment="Center"
-                                           Style="{StaticResource contactItem}" >
-        <!--https://stackoverflow.com/questions/2552853/how-to-bind-multiple-values-to-a-single-wpf-textblock-->
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} {1}">
-                                            <Binding Path="Name" />
-                                            <Binding Path="Surname" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-
-                                <Border BorderThickness="1"
-                                        BorderBrush="#FF000000"
-                                        HorizontalAlignment="Right"
-                                        Width="50">
-                                    <Image Source="{Binding Gender, Converter={StaticResource imageConverter}}"
-                                           HorizontalAlignment="Center"/>
-                                </Border>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete" Click="Delete_Click"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                    <ListBox.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+                    </ListBox.Resources>
                 </ListBox>
             </TabItem>
             
@@ -114,6 +154,98 @@
                                                     UpdateSourceTrigger=PropertyChanged}"/>
                     </DataGrid.Columns>
                 </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Validation settings" Name="TabSettings">
+                <StackPanel VerticalAlignment="Center">
+                    <Grid Width="500"
+                          VerticalAlignment="Center"
+                          Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window},
+                                                 Path=IsValidationLocked,
+                                                 Converter={StaticResource visibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                    
+                        <TextBlock Grid.ColumnSpan="2"
+                                   TextAlignment="Center"
+                               VerticalAlignment="Top"
+                               Margin="0 20 0 0"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Text="Validation settings"/>
+                        
+                        <TextBlock Grid.Row="2"
+                                   Style="{StaticResource excontactItem}"
+                                   Text="Name validation:"/>
+                        <TextBlock Grid.Row="3"
+                                   Style="{StaticResource excontactItem}"
+                                   Text="Surname validation:"/>
+                        <TextBlock Grid.Row="4"
+                                   Style="{StaticResource excontactItem}"
+                                   Text="Email validation:"/>
+                        <TextBlock Grid.Row="5"
+                                   Style="{StaticResource excontactItem}"
+                                   Text="Phone validation:"/>
+
+                        <ComboBox Name="NameValid"
+                                  Grid.Column="1"
+                                  Grid.Row="2"
+                                  VerticalAlignment="Center"
+                                  Margin="20 0"/>
+
+                        <ComboBox Name="SurnameValid"
+                                  Grid.Column="1"
+                                  Grid.Row="3"
+                                  VerticalAlignment="Center"
+                                  Margin="20 0"/>
+
+                        <ComboBox Name="EmailValid"
+                                  Grid.Column="1"
+                                  Grid.Row="4"
+                                  VerticalAlignment="Center"
+                                  Margin="20 0"/>
+                        
+                        <ComboBox Name="genderBox"
+                                  Grid.Column="1"
+                                  Grid.Row="5"
+                                  VerticalAlignment="Center"
+                                  Margin="20 0"/>
+
+                        <Button Name="lockButton"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="6"
+                                Margin="150 5"
+                                Click="lockButton_Click">
+                            Lock validation settings
+                        </Button>
+                    </Grid>
+
+                        <Button Name="unlockButton"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
+                                FontSize="20"
+                                Width="250"
+                                Height="50"
+                                Click="unlockButton_Click"
+                                Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window},
+                                                 Path=IsValidationUnLocked,
+                                                 Converter={StaticResource visibilityConverter}}">
+                            Unlock validation settings
+                        </Button>
+                        
+                </StackPanel>
             </TabItem>
         </TabControl>
     </DockPanel>

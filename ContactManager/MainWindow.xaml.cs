@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Text;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Documents;
 using Microsoft.Win32;
 using System.IO;
+using System.Windows.Controls;
+using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace ContactManager
 {
@@ -18,12 +19,14 @@ namespace ContactManager
         private readonly string ErrorCaption = "An error occured!";
 
         private ObservableCollection<Contact> contacts;
+
         public MainWindow()
         {
             InitializeComponent();
+            IsValidationLocked = true;
             contacts = new ObservableCollection<Contact>();
-            contacts.Add(new Contact("Rachel", "Green", "rachel@example.com", 765434, Genders.Female));
-            contacts.Add(new Contact("Chandler", "Bing", "chandler@example.com", 123, Genders.Male));
+            contacts.Add(new Contact("Rachel", "Green", "rachel@example.com", "765434", Genders.Female));
+            contacts.Add(new Contact("Chandler", "Bing", "chandler@example.com", "123", Genders.Male));
             DataContext = contacts;
         }
 
@@ -40,13 +43,13 @@ namespace ContactManager
         private void Menu_Add_Click(object sender, RoutedEventArgs e)
         {
             new AddContactWindow(contacts).ShowDialog();
-            DataContext = contacts;
+            ContactList.Items.Refresh();
         }
 
         private void Menu_Clear_Click(object sender, RoutedEventArgs e)
         {
-            contacts = new ObservableCollection<Contact>();
-            DataContext = contacts;
+            contacts.Clear();
+            ContactList.Items.Refresh();
         }
 
         private void Menu_Import_Click(object sender, RoutedEventArgs e)
@@ -110,5 +113,31 @@ namespace ContactManager
             }
         }
 
+
+        private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //var item = ContactList.ContainerFromElement(sender as DependencyObject) as ListBoxItem;
+
+
+            //if (item != null)
+            //    item.ContentTemplate = (DataTemplate)Resources["selectedContactTemplate"];
+
+            //ContactList.Items.Refresh();
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            contacts.Remove(ContactList.SelectedItem as Contact);
+        }
+
+        private void unlockButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsValidationLocked = false;
+        }
+
+        private void lockButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsValidationLocked = true;
+        }
     }
 }

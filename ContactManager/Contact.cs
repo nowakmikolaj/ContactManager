@@ -66,11 +66,7 @@ namespace ContactManager
             }
             set
             {
-                if (value.ToString() == "")
-                    phone = null;
-                else
-                    phone = int.Parse(value.ToString());
-
+                phone = value;
                 OnPropertyRaised("Phone");
             }
         }
@@ -92,36 +88,18 @@ namespace ContactManager
         {
         }
 
-        public Contact(string name, string surname, string email, int phone, Genders gender)
+        public Contact(string name, string surname, string email, string phone, Genders gender)
         {
             Name = name;
             Surname = surname;
             Email = email;
-            Phone = phone;
+            Phone = phone == "" ? null : (int?)int.Parse(phone);
             Gender = gender;
         }
 
         private void OnPropertyRaised([CallerMemberName] string PropertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
-        }
-    }
-
-    public class ImageConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            //Contact contact = (Contact)value;
-            Genders g = (Genders)value;
-
-            return g == Genders.Male
-                ? "pack://application:,,,/Resources/man.png"
-                : "pack://application:,,,/Resources/woman.jpg";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }
