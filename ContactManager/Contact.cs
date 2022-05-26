@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using System.Runtime.CompilerServices;
 
 namespace ContactManager
@@ -15,7 +16,7 @@ namespace ContactManager
         private string name;
         private string surname;
         private string email;
-        private int phone;
+        private int? phone;
         private Genders gender;
 
         public string Name { 
@@ -43,6 +44,7 @@ namespace ContactManager
             }
         }
 
+        [XmlElement(IsNullable = true)]
         public string Email
         {
             get
@@ -56,7 +58,7 @@ namespace ContactManager
             }
         }
 
-        public int Phone
+        public int? Phone
         {
             get
             {
@@ -64,7 +66,11 @@ namespace ContactManager
             }
             set
             {
-                phone = int.Parse(value.ToString());
+                if (value.ToString() == "")
+                    phone = null;
+                else
+                    phone = int.Parse(value.ToString());
+
                 OnPropertyRaised("Phone");
             }
         }

@@ -49,8 +49,8 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Import" IsEnabled="False"/>
-                <MenuItem Header="Export" IsEnabled="False"/>
+                <MenuItem Header="Import" Click="Menu_Import_Click" />
+                <MenuItem Header="Export" Click="Menu_Export_Click" />
                 <Separator/>
                 <MenuItem Header="Exit" Click="Menu_Exit_Click"/>
             </MenuItem>
