@@ -93,7 +93,7 @@ namespace ContactManager
                 return ValidationResult.ValidResult;
             }
 
-            return new ValidationResult(false, "Value must have at least 5 characters!");
+            return new ValidationResult(false, $"Value must have at least {minLength} characters!");
         }
     }
 }
