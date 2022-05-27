@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -78,8 +75,10 @@ namespace ContactManager
         public string TmpName { get; set; }
         public string TmpSurname { get; set; }
 
+        private int minLength = 4;
+
         public string Name => "Content length rule";
-        public string Description => "A rule checking if the legth of the text has is >= 5 characters";
+        public string Description => $"A rule checking if the legth of the text has is >= {minLength} characters";
 
         public ContentLengthValidationRule()
         {
@@ -89,7 +88,7 @@ namespace ContactManager
         {
             string content = (string)value;
 
-            if (content.Length >= 5)
+            if (content.Length >= minLength)
             {
                 return ValidationResult.ValidResult;
             }
