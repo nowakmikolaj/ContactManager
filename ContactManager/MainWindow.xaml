@@ -14,7 +14,26 @@
     <Window.Resources>
         <local:ImageConverter x:Key="imageConverter"/>
         <local:VisibilityConverter x:Key="visibilityConverter"/>
-
+        
+        <!--https://stackoverflow.com/questions/69524635/wpf-datagrid-with-a-one-click-combobox-showing-enumeration-values-sorted-by-enum-->
+        <ObjectDataProvider x:Key="GendersEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type Type="local:Genders"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
+        <ObjectDataProvider x:Key="ValidEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type Type="local:ValidationRules"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="ItemsSource" Value="{Binding Source={StaticResource ValidEnum}}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="20 0"/>
+        </Style>
+        
         <Style x:Key="contactItem" TargetType="{x:Type TextBlock}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="FontSize" Value="18"/>
@@ -25,6 +44,12 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="Margin" Value="10 0"/>
+        </Style>
+
+        <Style x:Key="validTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
 
         <DataTemplate x:Key="defaultContactTemplate">
@@ -46,7 +71,60 @@
                         HorizontalAlignment="Right"
                         Width="50">
                     <Image Source="{Binding Gender, Converter={StaticResource imageConverter}}"
-                                           HorizontalAlignment="Center"/>
+                                        Height="48"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="selectedContactTemplate">
+            <DockPanel>
+                <Grid DockPanel.Dock="Left"
+                      Margin="0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource contactItem}" >
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <Binding Path="Name" />
+                                <Binding Path="Surname" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Grid.Row="1"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource excontactItem}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{} Email: {0}">
+                                <Binding Path="Email"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <TextBlock Grid.Row="2"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource excontactItem}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{} Phone: {0}">
+                                <Binding Path="Phone"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+
+                <Border BorderThickness="1"
+                        DockPanel.Dock="Right"
+                                        BorderBrush="#FF000000"
+                                        HorizontalAlignment="Right"
+                                        Width="50"
+                                        Height="48">
+                    <Image Source="{Binding Gender, Converter={StaticResource imageConverter}}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
             </DockPanel>
         </DataTemplate>
@@ -65,8 +143,8 @@
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
-                        
-                        
+
+
                         <ControlTemplate.Triggers>
                             <Trigger Property="ItemsControl.AlternationIndex" Value="0">
                                 <Setter Property="Background" Value="#FFA0C5FF"/>
@@ -79,8 +157,8 @@
                                 <Setter Property="Background" Value="#FFFDCF6C"/>
                                 <Setter Property="Height" Value="90"/>
                             </Trigger>
-                            
-                <!--https://stackoverflow.com/questions/62178290/wpf-listbox-showing-empty-row-created-by-datagrid-->
+
+                            <!--https://stackoverflow.com/questions/62178290/wpf-listbox-showing-empty-row-created-by-datagrid-->
                             <DataTrigger Binding="{Binding}"
                                          Value="{x:Static CollectionView.NewItemPlaceholder}">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -90,13 +168,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <!--https://stackoverflow.com/questions/69524635/wpf-datagrid-with-a-one-click-combobox-showing-enumeration-values-sorted-by-enum-->
-        <ObjectDataProvider x:Key="GendersEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type Type="local:Genders"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
     </Window.Resources>
 
     <DockPanel>
@@ -170,7 +241,6 @@
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -186,42 +256,34 @@
                                FontWeight="Bold"
                                Text="Validation settings"/>
                         
-                        <TextBlock Grid.Row="2"
-                                   Style="{StaticResource excontactItem}"
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource validTextBlock}"
                                    Text="Name validation:"/>
-                        <TextBlock Grid.Row="3"
-                                   Style="{StaticResource excontactItem}"
+                        <TextBlock Grid.Row="2"
+                                   Style="{StaticResource validTextBlock}"
                                    Text="Surname validation:"/>
-                        <TextBlock Grid.Row="4"
-                                   Style="{StaticResource excontactItem}"
+                        <TextBlock Grid.Row="3"
+                                   Style="{StaticResource validTextBlock}"
                                    Text="Email validation:"/>
-                        <TextBlock Grid.Row="5"
-                                   Style="{StaticResource excontactItem}"
+                        <TextBlock Grid.Row="4"
+                                   Style="{StaticResource validTextBlock}"
                                    Text="Phone validation:"/>
 
                         <ComboBox Name="NameValid"
                                   Grid.Column="1"
-                                  Grid.Row="2"
-                                  VerticalAlignment="Center"
-                                  Margin="20 0"/>
+                                  Grid.Row="1"/>
 
                         <ComboBox Name="SurnameValid"
                                   Grid.Column="1"
-                                  Grid.Row="3"
-                                  VerticalAlignment="Center"
-                                  Margin="20 0"/>
+                                  Grid.Row="2"/>
 
                         <ComboBox Name="EmailValid"
                                   Grid.Column="1"
-                                  Grid.Row="4"
-                                  VerticalAlignment="Center"
-                                  Margin="20 0"/>
-                        
-                        <ComboBox Name="genderBox"
+                                  Grid.Row="3"/>
+
+                        <ComboBox Name="PhoneValid"
                                   Grid.Column="1"
-                                  Grid.Row="5"
-                                  VerticalAlignment="Center"
-                                  Margin="20 0"/>
+                                  Grid.Row="4"/>
 
                         <Button Name="lockButton"
                                 Grid.ColumnSpan="2"

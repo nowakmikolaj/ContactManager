@@ -16,7 +16,7 @@ namespace ContactManager
         private string name;
         private string surname;
         private string email;
-        private int? phone;
+        private string phone;
         private Genders gender;
 
         public string Name { 
@@ -58,7 +58,7 @@ namespace ContactManager
             }
         }
 
-        public int? Phone
+        public string Phone
         {
             get
             {
@@ -93,7 +93,7 @@ namespace ContactManager
             Name = name;
             Surname = surname;
             Email = email;
-            Phone = phone == "" ? null : (int?)int.Parse(phone);
+            Phone = phone;
             Gender = gender;
         }
 

@@ -30,13 +30,19 @@ namespace ContactManager
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
-            contacts.Add(new Contact(
-                                    nameBox.Text,
-                                    surnameBox.Text,
-                                    emailBox.Text,
-                                    phoneBox.Text,
-                                    (Genders)genderBox.SelectedValue ));
-            Close();
+            if (Validation.GetErrors(nameBox).Count == 0 &&
+                Validation.GetErrors(surnameBox).Count == 0 &&
+                Validation.GetErrors(emailBox).Count == 0 &&
+                Validation.GetErrors(phoneBox).Count == 0)
+            {
+                contacts.Add(new Contact(
+                            nameBox.Text,
+                            surnameBox.Text,
+                            emailBox.Text,
+                            phoneBox.Text,
+                            (Genders)genderBox.SelectedValue));
+                Close();
+            }
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)

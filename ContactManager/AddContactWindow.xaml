@@ -14,6 +14,11 @@
         BorderThickness="3">
 
     <Window.Resources>
+        <local:EmailValidationRule x:Key="emailValidationRule"/>
+        <local:PhoneValidationRule x:Key="phoneValidationRule"/>
+        <local:ContentLengthValidationRule x:Key="contentValidationRule"/>
+
+
         <Style x:Key="textBlockStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="12"/>
@@ -25,16 +30,37 @@
             <Setter Property="Margin" Value="40 5"/>
         </Style>
         
-        <Style x:Key="textBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="20 0"/>
-        </Style>
-
         <ObjectDataProvider x:Key="GendersEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type Type="local:Genders"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <!--https://www.codeproject.com/Tips/690130/Simple-Validation-in-WPF-->
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <Grid Width="280" Height="25">
+                    <Rectangle DockPanel.Dock="Right" VerticalAlignment="Center" Margin="5 0" RadiusX="5" RadiusY="5"  Width="15" Height="15" Fill="Red" ></Rectangle>
+                    <TextBlock VerticalAlignment="Center" Foreground="White" FontWeight="Heavy" FontSize="10" TextAlignment="Center" 
+                               ToolTip="{Binding ElementName=ErrorAdorner, Path=AdornedElement.(Validation.Errors)/ErrorContent}">
+                        X
+                    </TextBlock>
+                    <AdornedElementPlaceholder x:Name="ErrorAdorner"/>
+                </Grid>
+            </DockPanel>
+        </ControlTemplate>
+
+        <Style x:Key="TextBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                                               Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="20 0"/>
+        </Style>
     </Window.Resources>
 
     <StackPanel>
@@ -46,11 +72,11 @@
 
         <Grid Margin="30">
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="40"/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -66,6 +92,7 @@
             <TextBlock Grid.Row="2"
                        Style="{StaticResource textBlockStyle}"
                        Text="Email:"/>
+
             <TextBlock Grid.Row="3"
                        Style="{StaticResource textBlockStyle}"
                        Text="Phone:"/>
@@ -75,22 +102,58 @@
 
             <TextBox Name="nameBox"
                      Grid.Column="1"
-                     Style="{StaticResource textBoxStyle}"/>
+                     Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                     Style="{StaticResource TextBoxInError}">
+                <TextBox.Text>
+                    <Binding Source="{StaticResource contentValidationRule}" Path="TmpName" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ContentLengthValidationRule></local:ContentLengthValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
             <TextBox Name="surnameBox"
                      Grid.Column="1"
                      Grid.Row="1"
-                     Style="{StaticResource textBoxStyle}"/>
-
+                     Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                     Style="{StaticResource TextBoxInError}">
+                <TextBox.Text>
+                    <Binding Source="{StaticResource contentValidationRule}" Path="TmpSurname" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:ContentLengthValidationRule ></local:ContentLengthValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+            
             <TextBox Name="emailBox"
                      Grid.Column="1"
                      Grid.Row="2"
-                     Style="{StaticResource textBoxStyle}"/>
+                     Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                     Style="{StaticResource TextBoxInError}">
+                <TextBox.Text>
+                    <Binding Source="{StaticResource emailValidationRule}" Path="Tmp" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:EmailValidationRule></local:EmailValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
             <TextBox Name="phoneBox"
                      Grid.Column="1"
                      Grid.Row="3"
-                     Style="{StaticResource textBoxStyle}"/>
+                     Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                     Style="{StaticResource TextBoxInError}">
+                <TextBox.Text>
+                    <Binding Source="{StaticResource phoneValidationRule}" Path="Tmp" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <local:PhoneValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
             <ComboBox Name="genderBox"
                       Grid.Column="1"

@@ -116,13 +116,23 @@ namespace ContactManager
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //var item = ContactList.ContainerFromElement(sender as DependencyObject) as ListBoxItem;
+            var L = sender as ListBox;
 
+            if (e.RemovedItems.Count > 0) 
+            {
+                var contact = e.RemovedItems[0] as Contact;
+                if (contact != null)
+                {
+                    var unselectedItem = L.ItemContainerGenerator.ContainerFromItem(contact) as ListBoxItem;
+                    if (unselectedItem != null)
+                        unselectedItem.ContentTemplate = (DataTemplate)Resources["defaultContactTemplate"];
 
-            //if (item != null)
-            //    item.ContentTemplate = (DataTemplate)Resources["selectedContactTemplate"];
+                }
+            }
 
-            //ContactList.Items.Refresh();
+            var selectedItem = L.ItemContainerGenerator.ContainerFromItem(L.SelectedItem as Contact) as ListBoxItem;
+            if (selectedItem != null)
+                selectedItem.ContentTemplate = (DataTemplate)Resources["selectedContactTemplate"];
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -137,6 +147,8 @@ namespace ContactManager
 
         private void lockButton_Click(object sender, RoutedEventArgs e)
         {
+            var p = Application.Current.FindResource("phoneBox");
+
             IsValidationLocked = true;
         }
     }
