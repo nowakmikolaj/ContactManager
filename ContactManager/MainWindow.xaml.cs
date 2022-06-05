@@ -116,22 +116,16 @@ namespace ContactManager
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var L = sender as ListBox;
-
-            if (e.RemovedItems.Count > 0) 
+            ListBox L = sender as ListBox;
+            
+            if (e.RemovedItems.Count > 0 &&
+                e.RemovedItems[0] is Contact contact &&
+                L.ItemContainerGenerator.ContainerFromItem(contact) is ListBoxItem unselectedItem)
             {
-                var contact = e.RemovedItems[0] as Contact;
-                if (contact != null)
-                {
-                    var unselectedItem = L.ItemContainerGenerator.ContainerFromItem(contact) as ListBoxItem;
-                    if (unselectedItem != null)
-                        unselectedItem.ContentTemplate = (DataTemplate)Resources["defaultContactTemplate"];
-
-                }
+                unselectedItem.ContentTemplate = (DataTemplate)Resources["defaultContactTemplate"];
             }
 
-            var selectedItem = L.ItemContainerGenerator.ContainerFromItem(L.SelectedItem as Contact) as ListBoxItem;
-            if (selectedItem != null)
+            if (L.ItemContainerGenerator.ContainerFromItem(L.SelectedItem as Contact) is ListBoxItem selectedItem)
                 selectedItem.ContentTemplate = (DataTemplate)Resources["selectedContactTemplate"];
         }
 
@@ -140,15 +134,13 @@ namespace ContactManager
             contacts.Remove(ContactList.SelectedItem as Contact);
         }
 
-        private void unlockButton_Click(object sender, RoutedEventArgs e)
+        private void UnlockButton_Click(object sender, RoutedEventArgs e)
         {
             IsValidationLocked = false;
         }
 
-        private void lockButton_Click(object sender, RoutedEventArgs e)
+        private void LockButton_Click(object sender, RoutedEventArgs e)
         {
-            var p = Application.Current.FindResource("phoneBox");
-
             IsValidationLocked = true;
         }
     }

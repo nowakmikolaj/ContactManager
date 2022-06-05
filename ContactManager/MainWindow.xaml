@@ -289,7 +289,7 @@
                                 Grid.ColumnSpan="2"
                                 Grid.Row="6"
                                 Margin="150 5"
-                                Click="lockButton_Click">
+                                Click="LockButton_Click">
                             Lock validation settings
                         </Button>
                     </Grid>
@@ -300,13 +300,12 @@
                                 FontSize="20"
                                 Width="250"
                                 Height="50"
-                                Click="unlockButton_Click"
+                                Click="UnlockButton_Click"
                                 Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window},
                                                  Path=IsValidationUnLocked,
                                                  Converter={StaticResource visibilityConverter}}">
                             Unlock validation settings
                         </Button>
-                        
                 </StackPanel>
             </TabItem>
         </TabControl>

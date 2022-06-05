@@ -88,12 +88,9 @@ namespace ContactManager
         {
             string content = (string)value;
 
-            if (content.Length >= minLength)
-            {
-                return ValidationResult.ValidResult;
-            }
-
-            return new ValidationResult(false, $"Value must have at least {minLength} characters!");
+            return content.Length >= minLength
+                ? ValidationResult.ValidResult
+                : new ValidationResult(false, $"Value must have at least {minLength} characters!");
         }
     }
 }
