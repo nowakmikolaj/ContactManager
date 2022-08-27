@@ -66,7 +66,7 @@ namespace ContactManager
                 return ValidationResult.ValidResult;
             }
             
-            return new ValidationResult(false, "Invalid phone number");
+            return new ValidationResult(false, "Invalid phone number\nFormat: xxx-xxx-xxx");
         }
     }
 
@@ -75,7 +75,7 @@ namespace ContactManager
         public string TmpName { get; set; }
         public string TmpSurname { get; set; }
 
-        private int minLength = 4;
+        private int minLength = 2;
 
         public string Name => "Content length rule";
         public string Description => $"A rule checking if the legth of the text has is >= {minLength} characters";
